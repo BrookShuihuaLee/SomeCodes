@@ -35,14 +35,43 @@ def mergeSort(a):
     mergeSortPart(a[:], 0, len(a), a)
     return a
 
+import random
+def quickSort(a):
+    def quickSortPart(a, iBegin, iEnd):
+        if iEnd - iBegin <= 1: return
+        iRandom = random.randrange(iBegin, iEnd)
+        a[iBegin], a[iRandom] = a[iRandom], a[iBegin]
+        i = iBegin
+        for j in xrange(iBegin + 1, iEnd):
+            if a[j] < a[iBegin]:
+                i += 1
+                a[i], a[j] = a[j], a[i]
+        a[iBegin], a[i] = a[i], a[iBegin]
+        quickSortPart(a, iBegin, i)
+        quickSortPart(a, i + 1, iEnd)
+    quickSortPart(a, 0, len(a))
+    return a
+
 if __name__ == '__main__':
     import random
-    for i in xrange(100):
+    for i in xrange(1000):
         l = random.randrange(0, 100)
         a = [random.randrange(0, 100) for x in xrange(l)]
         if sorted(a) != heapSort(a[:]):
-            print a, sorted(a), heapSort(a[:])
+            print 'heapSort'
+            print a
+            print sorted(a)
+            print heapSort(a[:])
             break
         if sorted(a) != mergeSort(a[:]):
-            print a, sorted(a), mergeSort(a[:])
+            print 'mergeSort'
+            print a
+            print sorted(a)
+            print mergeSort(a[:])
+            break
+        if sorted(a) != quickSort(a[:]):
+            print 'quickSort'
+            print a
+            print sorted(a)
+            print quickSort(a[:])
             break
