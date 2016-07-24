@@ -1,11 +1,11 @@
 def heapSort(a):
     n = len(a)
-    leftSon = lambda(i): ((i + 1) << 1) - 1
-    rightSon = lambda(i): leftSon(i) + 1
+    leftChild = lambda(i): ((i + 1) << 1) - 1
+    rightChild = lambda(i): leftChild(i) + 1
     father = lambda(i): ((i + 1) >> 1) - 1
     def adjust(i, n):
         while True:
-            iLeft, iRight = leftSon(i), rightSon(i)
+            iLeft, iRight = leftChild(i), rightChild(i)
             if iLeft >= n: return
             iBig = iLeft if iRight >= n or a[iLeft] > a[iRight] else iRight
             if a[iBig] < a[i]: return
