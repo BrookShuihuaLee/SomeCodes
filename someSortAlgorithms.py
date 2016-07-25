@@ -5,7 +5,6 @@ def heapSort(a):
     def adjust(i, n):
         while True:
             iLeft, iRight = leftChild(i), rightChild(i)
-            if iLeft >= n: return
             iBig = iLeft if iRight >= n or a[iLeft] > a[iRight] else iRight
             if iBig >= n or a[iBig] <= a[i]: return
             a[i], a[iBig] = a[iBig], a[i]
