@@ -1,5 +1,4 @@
 def heapSort(a):
-    n = len(a)
     leftChild = lambda(i): ((i + 1) << 1) - 1
     rightChild = lambda(i): leftChild(i) + 1
     father = lambda(i): ((i + 1) >> 1) - 1
@@ -11,6 +10,7 @@ def heapSort(a):
             if a[iBig] < a[i]: return
             a[i], a[iBig] = a[iBig], a[i]
             i = iBig
+    n = len(a)
     for i in xrange(father(n - 1), -1, -1): adjust(i, n)
     while n > 1:
         a[0], a[n - 1] = a[n - 1], a[0]
