@@ -7,7 +7,7 @@ def heapSort(a):
             iLeft, iRight = leftChild(i), rightChild(i)
             if iLeft >= n: return
             iBig = iLeft if iRight >= n or a[iLeft] > a[iRight] else iRight
-            if a[iBig] < a[i]: return
+            if iBig >= n or a[iBig] < a[i]: return
             a[i], a[iBig] = a[iBig], a[i]
             i = iBig
     n = len(a)
