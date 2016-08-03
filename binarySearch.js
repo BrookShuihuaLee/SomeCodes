@@ -20,7 +20,7 @@ function lowerBound (a, target) {
         if (a[iMid] < target) iBegin = iMid + 1;
         else iEnd = iMid;
     }
-    return iBegin === a.length ? -1 : iBegin;
+    return iBegin;
 };
 
 function upperBound (a, target) {
@@ -32,7 +32,7 @@ function upperBound (a, target) {
         if (a[iMid] <= target) iBegin = iMid + 1;
         else iEnd = iMid;
     }
-    return iBegin === 0 ? -1 : iBegin - 1;
+    return iBegin - 1;
 }
 
 if (require.main === module) (function () {
