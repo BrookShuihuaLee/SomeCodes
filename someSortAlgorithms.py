@@ -1,7 +1,7 @@
 def heapSort(a):
-    leftChild = lambda(i): ((i + 1) << 1) - 1
-    rightChild = lambda(i): leftChild(i) + 1
-    father = lambda(i): ((i + 1) >> 1) - 1
+    leftChild = lambda i: ((i + 1) << 1) - 1
+    rightChild = lambda i: leftChild(i) + 1
+    father = lambda i: ((i + 1) >> 1) - 1
     def adjust(i, n):
         while True:
             iLeft, iRight = leftChild(i), rightChild(i)
