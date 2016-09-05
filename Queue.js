@@ -12,7 +12,7 @@ class Queue {
     }
 
     get size () {
-        return this._size = 0
+        return this._size
     }
 
     push (v) {
