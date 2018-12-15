@@ -1,0 +1,28 @@
+{
+    "name": "SomeCodes",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "https://github.com/BrookShuihuaLee/SomeCodes.git",
+    "author": "Shuihua Li <lishuihua@rd.netease.com>",
+    "license": "MIT",
+    "scripts": {
+        "test": "jest",
+        "test-pro": "jest --watch"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.2.0",
+        "@babel/plugin-proposal-class-properties": "^7.2.1",
+        "@babel/preset-env": "^7.2.0",
+        "babel-core": "^7.0.0-bridge.0",
+        "babel-jest": "^23.6.0",
+        "jest": "^23.6.0"
+    },
+    "babel": {
+        "presets": [
+            "@babel/preset-env"
+        ],
+        "plugins": [
+            "@babel/plugin-proposal-class-properties"
+        ]
+    }
+}

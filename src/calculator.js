@@ -1,22 +1,24 @@
-class Calculator {
-    constructor () {
-        this._opMap = {
-            '+': (a, b) => a + b,
-            '-': (a, b) => a - b,
-            '*': (a, b) => a * b,
-            '/': (a, b) => a / b,
-        }
-    }
+const OP_MAP = {
+    '+': (a, b) => a + b,
+    '-': (a, b) => a - b,
+    '*': (a, b) => a * b,
+    '/': (a, b) => a / b,
+}
+
+export default class Calculator {
+    _tokens = null
 
     run (input) {
-        this._setInput(input)
+        this._tokenize(input)
         return this._expression()
     }
 
-    _setInput (input) {
-        this._tokens = input
-            .match(/\d+\.\d+|\d+|[\+\-\*\/\(\)]/g)
-            .reverse()
+    _tokenize (input) {
+        this._tokens = (
+            input
+                .match(/\d+\.\d+|\d+|[\+\-\*\/\(\)]/g)
+                .reverse()
+        )
     }
 
     _peekToken () {
@@ -40,15 +42,17 @@ class Calculator {
     }
 
     _doOp (op, a, b) {
-        return this._opMap[op](a, b)
+        return OP_MAP[op](a, b)
     }
 
     _unit () {
         let v
+
         if (this._accept('(')) {
             v = this._expression()
             this._accept(')')
         } else v = Number(this._acceptNumber())
+        
         return v
     }
 
@@ -57,16 +61,20 @@ class Calculator {
     }
 
     _factor () {
-        let v = this._unary(),
-            op
+        let v = this._unary()
+        let op
+
         while (op = this._acceptAny(['*', '/'])) v = this._doOp(op, v, this._unary())
+
         return v
     }
 
     _expression () {
-        let v = this._factor(),
-            op
+        let v = this._factor()
+        let op
+
         while (op = this._acceptAny(['+', '-'])) v = this._doOp(op, v, this._factor())
+
         return v
     }
 }
