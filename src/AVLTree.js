@@ -1,10 +1,18 @@
-let NIL
+export let NIL
 
-class Node {
-    constructor (value, height = 1) {
+export class Node {
+    value
+    height
+    parent
+    leftChild
+    rightChild
+
+    constructor (value, height = 1, parent = NIL, leftChild = NIL, rightChild = NIL) {
         this.value = value
         this.height = height
-        this.parent = this.leftChild = this.rightChild = NIL
+        this.parent = parent
+        this.leftChild = leftChild
+        this.rightChild = rightChild
     }
 
     get isLeftChild () {
@@ -26,21 +34,49 @@ class Node {
     get grandparent () {
         return this.parent.parent
     }
+
+    toJSON() {
+        const symbol = Symbol()
+        const stack = [this]
+
+        NIL[symbol] = 'NIL'
+        while (stack.length) {
+            const node = stack.pop()
+            if (node === NIL) continue
+
+            if (node.leftChild[symbol] && node.rightChild[symbol]) {
+                node[symbol] = {
+                    value: node.value,
+                    height: node.height,
+                    leftChild: node.leftChild[symbol],
+                    rightChild: node.rightChild[symbol],
+                }
+
+                if (node.leftChild !== NIL) delete node.leftChild[symbol]
+                if (node.rightChild !== NIL) delete node.rightChild[symbol]
+            } else {
+                stack.push(node, node.leftChild, node.rightChild)
+            }
+        }
+        delete NIL[symbol]
+
+        const result = this[symbol]
+        delete this[symbol]
+        return result
+    }
 }
 
-NIL = new Node(null, 0)
+NIL = new Node(null, 0, null, null, null)
 
-class AVLTree {
-    constructor () {
-        this._root = NIL
-    }
+export class AVLTree {
+    _root = NIL
 
     add (value) {
         const node = new Node(value)
         if (this._root === NIL) this._root = node
         else {
             let n = this._root
-            while (true) {
+            for (;;) {
                 if (value < n.value) {
                     if (n.leftChild === NIL) {
                         n.leftChild = node
@@ -61,40 +97,47 @@ class AVLTree {
         }
     }
 
+    remove (value) {
+        const node = this._findNodeByValue(this._root, value)
+        if (node !== NIL) {
+            const smallestNode = node.rightChild === NIL ? node : this._findSmallestNode(node.rightChild)
+            {[node.value, smallestNode.value] = [smallestNode.value, node.value]}
+            this._remove(smallestNode)
+        }
+    }
+
+    toJSON() {
+        return this._root.toJSON()
+    }
+
     _refreshHeight (node) {
-        node.height = Math.max(node.leftChild.height, node.rightChild.height)
+        return node.height = Math.max(node.leftChild.height, node.rightChild.height) + 1
     }
 
     _balance (node) {
-        let parent,
-            oldLeftHeight,
-            oldRightHeight
-        if (node !== this._root) {
-            parent = node.parent
-            oldLeftHeight = parent.leftChild.height
-            oldRightHeight = parent.rightChild.height
-        }
-
-        this._refreshHeight(node)
-        if (node.leftChild.height - node.rightChild.height === 2) {
-            if (node.leftChild.rightChild.height > node.leftChild.leftChild.height) {
-                this._rotateLeft(node.leftChild.rightChild)
+        for (;;) {
+            const oldHeight = node.height
+            this._refreshHeight(node)
+            if (node.leftChild.height - node.rightChild.height === 2) {
+                if (node.leftChild.rightChild.height > node.leftChild.leftChild.height) {
+                    this._rotateLeft(node.leftChild.rightChild)
+                }
+                this._rotateRight(node.leftChild)
+            } else if (node.rightChild.height - node.leftChild.height === 2) {
+                if (node.rightChild.leftChild.height > node.rightChild.rightChild.height) {
+                    this._rotateRight(node.rightChild.leftChild)
+                }
+                this._rotateLeft(node.rightChild)
             }
-            this._rotateRight(node.leftChild)
-        } else if (node.rightChild.height - node.leftChild.height === 2) {
-            if (node.rightChild.leftChild.height > node.rightChild.rightChild.height) {
-                this._rotateRight(node.rightChild.leftChild)
-            }
-            this._rotateLeft(node.rightChild)
+            if (node === this._root || oldHeight === node.height) break
+            node = node.parent
         }
-
-        if (node !== this._root
-            && (oldLeftHeight !== parent.leftChild.height || oldRightHeight !== parent.rightChild.height)
-        ) this._balance(parent)
     }
 
     _rotateLeft (node) {
-        const parent = node.parent
+        const {
+            parent,
+        } = node
 
         parent.rightChild = node.leftChild
         node.leftChild.parent = parent
@@ -112,7 +155,9 @@ class AVLTree {
     }
 
     _rotateRight (node) {
-        const parent = node.parent
+        const {
+            parent,
+        } = node
 
         parent.leftChild = node.rightChild
         node.rightChild.parent = parent
@@ -129,71 +174,31 @@ class AVLTree {
         this._refreshHeight(node)
     }
 
-    remove (value) {
-        const node = this._findNodeByValue(this._root, value)
-        if (node !== NIL) {
-            const smallestNode = node.rightChild === NIL ? node : this._findSmallestNode(node.rightChild)
-            {[node.value, smallestNode.value] = [smallestNode.value, node.value]}
-            this._remove(node)
-        }
-    }
-
     _remove (node) {
         const child = node.leftChild !== NIL ? node.leftChild : node.rightChild
+        
         if (node === this._root) {
             this._root = child
             child.parent = NIL
             return
         }
-        child.parent = node.parent
+        
+        if (child !== NIL) child.parent = node.parent
         if (node.isLeftChild) node.parent.leftChild = child
         else node.parent.rightChild = child
         this._balance(node.parent)
     }
 
     _findNodeByValue (node, value) {
-        if (node === NIL) return NIL
-        if (value < node.value) return this._findNodeByValue(node.leftChild, value)
-        else if (node.value < value) return this._findNodeByValue(node.rightChild, value)
+        while (node !== NIL && node.value !== value) {
+            if (value < node.value) node = node.leftChild
+            else node = node.rightChild
+        }
         return node
     }
 
     _findSmallestNode (node) {
-        return node.leftChild === NIL ? node : this._findSmallestNode(node.leftChild)
+        while (node.leftChild !== NIL) node = node.leftChild
+        return node
     }
 }
-
-function test () {
-    const
-    a = [],
-    t = new AVLTree(),
-    check = function () {
-        function dfs (node) {
-            return node === NIL || (dfs(node.leftChild) && dfs(node.rightChild) && Math.abs(node.leftChild.height - node.rightChild.height) <= 1)
-        }
-        if (!dfs(t._root)) {
-            console.log(a)
-            console.log(toString(t._root))
-            process.exit(-1)
-        }
-    },
-    toString = function (node) {
-        if (node === NIL) return 'NIL'
-        return `(${node.value}, ${toString(node.leftChild)}, ${toString(node.rightChild)})`
-    }
-
-    while (Math.random() < 0.99) {
-        a.push(Math.floor(Math.random() * 100))
-    }
-    for (let v of a) {
-        t.add(v)
-        check()
-    }
-    let aa = a.slice()
-    while (aa.length) {
-        t.remove(aa.splice(Math.floor(Math.random() * aa.length), 1)[0])
-        check()
-    }
-    // console.log('ok')
-}
-while (Math.random() < 0.99) test()
