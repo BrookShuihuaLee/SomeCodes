@@ -20,7 +20,7 @@ test('AVLTree random test', () => {
         }
     
         const a = []
-        for (let i = Math.random() * 15; i > 0; i--) a.push(Math.floor(Math.random() * 100))
+        for (let i = Math.random() * 100; i > 0; i--) a.push(Math.floor(Math.random() * 100))
         for (let v of a) {
             errorMsg = {
                 a,
@@ -43,5 +43,5 @@ test('AVLTree random test', () => {
             check()
         }
     }
-    for (let i = Math.random() * 10000; i > 0; i--) test()
+    for (let i = Math.random() * 100; i > 0; i--) test()
 })

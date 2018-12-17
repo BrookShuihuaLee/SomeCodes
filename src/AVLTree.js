@@ -116,7 +116,12 @@ export class AVLTree {
 
     _balance (node) {
         for (;;) {
-            const oldHeight = node.height
+            const {
+                height: oldHeight,
+                parent,
+            } = node
+            const isRoot = node === this._root
+
             this._refreshHeight(node)
             if (node.leftChild.height - node.rightChild.height === 2) {
                 if (node.leftChild.rightChild.height > node.leftChild.leftChild.height) {
@@ -129,8 +134,9 @@ export class AVLTree {
                 }
                 this._rotateLeft(node.rightChild)
             }
-            if (node === this._root || oldHeight === node.height) break
-            node = node.parent
+            
+            if (isRoot || oldHeight === node.height) break
+            node = parent
         }
     }
 
