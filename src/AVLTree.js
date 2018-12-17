@@ -179,7 +179,7 @@ export class AVLTree {
         
         if (node === this._root) {
             this._root = child
-            child.parent = NIL
+            if (child !== NIL) child.parent = NIL
             return
         }
         
