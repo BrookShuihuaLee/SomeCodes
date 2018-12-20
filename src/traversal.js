@@ -129,4 +129,5 @@ function testRandom () {
     }
 }
 
+test()
 testRandom()
