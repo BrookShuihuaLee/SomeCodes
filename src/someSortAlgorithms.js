@@ -82,8 +82,8 @@ export function quickSort(a) {
 }
 
 /**
- * 快速排序
- * 平均O(n*log(n)) 最坏O(n^2) 最好O(n*log(n)) 空间O(log(n)) 不稳定
+ * 归并排序
+ * 平均O(n*log(n)) 最坏O(n*log(n)) 最好O(n*log(n)) 空间O(n) 稳定
  * @param {number[]} a 
  */
 export function mergeSort(a) {
@@ -95,10 +95,39 @@ export function mergeSort(a) {
         let iLeft = iBegin
         let iRight = iMid
         for (let i = iBegin; i < iEnd; i++) {
-            if (iRight === iEnd || iLeft < iMid && fromA[iLeft] < fromA[iRight]) toA[i] = fromA[iLeft++]
+            if (iRight === iEnd || iLeft < iMid && fromA[iLeft] <= fromA[iRight]) toA[i] = fromA[iLeft++]
             else toA[i] = fromA[iRight++]
         }
     }
     merge([...a], a, 0, a.length)
+    return a
+}
+
+/**
+ * 归并排序-非递归
+ * 平均O(n*log(n)) 最坏O(n*log(n)) 最好O(n*log(n)) 空间O(n) 稳定
+ * @param {number[]} a 
+ */
+export function mergeSortNoRecursion(a) {
+    const s = [[[...a], a, 0, a.length, true]]
+    while (s.length) {
+        const [fromA, toA, iBegin, iEnd, shouldMergePartFirst] = s.pop()
+        const iMid = (iBegin + iEnd) >> 1
+        if (shouldMergePartFirst) {
+            if (iEnd - iBegin <= 1) continue
+            s.push(
+                [fromA, toA, iBegin, iEnd, false],
+                [toA, fromA, iBegin, iMid, true],
+                [toA, fromA, iMid, iEnd, true],
+            )
+        } else {
+            let iLeft = iBegin
+            let iRight = iMid
+            for (let i = iBegin; i < iEnd; i++) {
+                if (iRight === iEnd || iLeft < iMid && fromA[iLeft] < fromA[iRight]) toA[i] = fromA[iLeft++]
+                else toA[i] = fromA[iRight++]
+            }
+        }
+    }
     return a
 }
