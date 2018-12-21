@@ -6,6 +6,7 @@ import {
     quickSort,
     mergeSort,
     mergeSortNoRecursion,
+    heapSort,
 } from './someSortAlgorithms'
 
 function sysSort(a) {
@@ -23,6 +24,7 @@ const sortFuncs = [
     quickSort,
     mergeSort,
     mergeSortNoRecursion,
+    heapSort,
 ]
 
 for (const sort of sortFuncs) {

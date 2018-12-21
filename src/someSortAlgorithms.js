@@ -131,3 +131,31 @@ export function mergeSortNoRecursion(a) {
     }
     return a
 }
+
+/**
+ * 堆排序   
+ * 平均O(n*log(n)) 最坏O(n*log(n)) 最好O(n*log(n)) 空间O(1) 不稳定
+ * @param {number[]} a 
+ */
+export function heapSort(a) {
+    const getLeftChildIndex = i => ((i + 1) << 1) - 1
+    const getRightChildIndex = i => (i + 1) << 1
+    const getParentIndex = i => (i + 1) >> 1
+    function adjust(i, n) {
+        for(;;) {
+            const iLeft = getLeftChildIndex(i)
+            const iRight = getRightChildIndex(i)
+            const iBigger = iRight >= n || a[iLeft] > a[iRight] ? iLeft : iRight
+            if (iBigger >= n || a[iBigger] <= a[i]) return
+            swap(a, i, iBigger)
+            i = iBigger
+        }
+    }
+    let n = a.length
+    for (let i = getParentIndex(n - 1); i >= 0; i--) adjust(i, n)
+    while (n > 1) {
+        swap(a, 0, --n)
+        adjust(0, n)
+    }
+    return a
+}
