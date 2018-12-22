@@ -18,6 +18,7 @@ function compareWithSysSort(sort, a) {
 }
 
 const sortFuncs = [
+    sysSort,
     bubbleSort,
     insertionSort,
     selectionSort,
