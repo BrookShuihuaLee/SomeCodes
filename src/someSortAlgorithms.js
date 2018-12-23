@@ -140,7 +140,7 @@ export function mergeSortNoRecursion(a) {
 export function heapSort(a) {
     const getLeftChildIndex = i => ((i + 1) << 1) - 1
     const getRightChildIndex = i => (i + 1) << 1
-    const getParentIndex = i => (i + 1) >> 1
+    const getParentIndex = i => ((i + 1) >> 1) - 1
     function adjust(i, n) {
         for(;;) {
             const iLeft = getLeftChildIndex(i)
