@@ -3,8 +3,9 @@ import java.util.*;
 class Main {
     public static void main(String[] args) {
         Random random = new Random();
-        int[] a = new int[1000];
-        
+        int[] a = new int[3000];
+        for (int i = 0; i < a.length; i++) a[i] = random.nextInt();
+
         {
             long time = 0;
             for (int i = 1; i < a.length; i++) {
@@ -35,6 +36,16 @@ class Main {
             }
             System.out.println("findKthLargestPriorityQueue2\t" + time);
         }
+        {
+            long time = 0;
+            for (int i = 1; i < a.length; i++) {
+                int[] clonedA = a.clone();
+                long startTime = System.currentTimeMillis();
+                Tool.findKthLargestHeap(clonedA, i);
+                time += System.currentTimeMillis() - startTime;
+            }
+            System.out.println("findKthLargestHeap\t" + time);
+        }
     }
 }
 
@@ -56,6 +67,7 @@ class Tool {
         a[j] = tmp;
     }
 
+    // best
     public static int findKthLargestQuick(int[] a, int k) {
         k = clamp(k, 1, a.length);
         int iBegin = 0;
@@ -83,7 +95,6 @@ class Tool {
         }
     }
     
-    // best
     public static int findKthLargestPriorityQueue(int[] a, int k) {
         k = clamp(k, 1, a.length);
         PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
@@ -109,5 +120,40 @@ class Tool {
             }
         }
         return pq.peek();
+    }
+
+    private static int getLeftChildIndex(int i) {
+        return ((i + 1) << 1) - 1;
+    }
+
+    private static int getRightChildIndex(int i) {
+        return (i + 1) << 1;
+    }
+
+    private static int getParentIndex(int i) {
+        return ((i + 1) >> 1) - 1;
+    }
+
+    private static void adjust(int[] a, int i, int n) {
+        for (;;) {
+            int iLeft = getLeftChildIndex(i);
+            int iRight = getRightChildIndex(i);
+            int iSmaller = iRight >= n || a[iLeft] <= a[iRight] ? iLeft : iRight;
+            if (iSmaller >= n || a[i] <= a[iSmaller]) return;
+            swap(a, i, iSmaller);
+            i = iSmaller;
+        }
+    }
+
+    public static int findKthLargestHeap(int[] a, int k) {
+        k = clamp(k, 1, a.length);
+        for (int i = getParentIndex(k - 1); i >= 0; i--) adjust(a, i, k);
+        for (int i = k; i < a.length; i++) {
+            if (a[i] > a[0]) {
+                swap(a, i, 0);
+                adjust(a, 0, k);
+            }
+        }
+        return a[0];
     }
 }
