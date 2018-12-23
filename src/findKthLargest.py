@@ -1,5 +1,6 @@
 import random
 import heapq
+import time
 
 def clamp(v, minV, maxV):
     return max(minV, min(v, maxV))
@@ -42,6 +43,30 @@ def findKthLargestHeap(a, k):
             heapq.heappush(h, a[i])
     return h[0]
 
+# best
+def findKthLargestHeap2(a, k):
+    n = len(a)
+    k = max(1, min(n, k))
+    h = a[:k]
+    heapq.heapify(h)
+    for i in range(k, n):
+        if a[i] > h[0]:
+            heapq.heappop(h)
+            heapq.heappush(h, a[i])
+    return h[0]
+
 if __name__ == '__main__':
-    print(findKthLargestHeap([-1, 2, 1], 1))
-    print(findKthLargestQuick([-1, 2, 1], 1))
+    a = list(range(2000))
+    random.shuffle(a)
+    def run(find):
+        allTime = 0
+        for i in range(1, len(a) + 1):
+            clonedA = a[:]
+            startTime = time.time()
+            find(clonedA, i)
+            allTime += time.time() - startTime
+        return allTime
+
+    print('findKthLargestQuick', run(findKthLargestQuick))
+    print('findKthLargestHeap', run(findKthLargestHeap))
+    print('findKthLargestHeap2', run(findKthLargestHeap2))
