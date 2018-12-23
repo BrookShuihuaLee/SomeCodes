@@ -34,7 +34,7 @@ def findKthLargestQuick(a, k):
 
 def findKthLargestHeap(a, k):
     n = len(a)
-    k = max(1, min(n, k))
+    k = clamp(k, 1, len(a))
     h = []
     for i in range(k): heapq.heappush(h, a[i])
     for i in range(k, n):
@@ -46,7 +46,7 @@ def findKthLargestHeap(a, k):
 # best
 def findKthLargestHeap2(a, k):
     n = len(a)
-    k = max(1, min(n, k))
+    k = clamp(k, 1, len(a))
     h = a[:k]
     heapq.heapify(h)
     for i in range(k, n):
